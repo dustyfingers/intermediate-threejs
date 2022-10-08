@@ -27,13 +27,14 @@ const sphere = new THREE.Mesh(
         50, // # of width segments
         50 // # of height segments
     ),
-    // new THREE.MeshBasicMaterial({
-    //     // color: 0xff0000
-    //     map: new THREE.TextureLoader().load('./img/globe_uv.jpg'),
-    // })
     new THREE.ShaderMaterial({
         vertexShader,
         fragmentShader,
+        uniforms: {
+            globeTexture: {
+                value: new THREE.TextureLoader().load('./img/globe_uv.jpg'),
+            },
+        },
     })
 );
 
