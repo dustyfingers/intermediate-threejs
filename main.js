@@ -8,8 +8,13 @@ const camera = new THREE.PerspectiveCamera(
     1000
 );
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({
+    // adding anti-aliasing to renderer helps reduce jagged edges on geometry
+    antialias: true,
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
+// matching the devices pixel ratio also helps produce the highest resolution image possible
+renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 // create a sphere
@@ -28,7 +33,7 @@ const sphere = new THREE.Mesh(
 // add to scene
 scene.add(sphere);
 
-camera.position.z = 10;
+camera.position.z = 50;
 
 function animate() {
     requestAnimationFrame(animate);
