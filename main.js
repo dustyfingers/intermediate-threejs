@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 
+import vertexShader from './shaders/vertex.glsl';
+import fragmentShader from './shaders/fragment.glsl';
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
     75,
@@ -24,16 +27,20 @@ const sphere = new THREE.Mesh(
         50, // # of width segments
         50 // # of height segments
     ),
-    new THREE.MeshBasicMaterial({
-        // color: 0xff0000
-        map: new THREE.TextureLoader().load('./img/globe_uv.jpg'),
+    // new THREE.MeshBasicMaterial({
+    //     // color: 0xff0000
+    //     map: new THREE.TextureLoader().load('./img/globe_uv.jpg'),
+    // })
+    new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
     })
 );
 
 // add to scene
 scene.add(sphere);
 
-camera.position.z = 50;
+camera.position.z = 15;
 
 function animate() {
     requestAnimationFrame(animate);
