@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-
+import gsap from 'gsap';
 import earthVertexShader from './shaders/earthVertex.glsl';
 import earthFragmentShader from './shaders/earthFragment.glsl';
 import atmosphereVertexShader from './shaders/atmosphereVertex.glsl';
@@ -65,11 +65,52 @@ atmosphere.scale.set(1.1, 1.1, 1.1);
 // add to scene
 scene.add(atmosphere);
 
+// add earth meshes to scene
+const earthGroup = new THREE.Group();
+earthGroup.add(sphere);
+// earthGroup.add(atmosphere);
+scene.add(earthGroup);
+
+// stars
+const starGeometry = new THREE.BufferGeometry();
+
+const starVertices = [];
+for (let i = 0; i < 10000; i++) {
+    const x = (Math.random() - 0.5) * 2000;
+    const y = (Math.random() - 0.5) * 2000;
+    // negative z values go 'in' to the three js scene
+    const z = -Math.random() * 2000;
+    starVertices.push(x, y, z);
+}
+// split star vertices up into groupings of three
+starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+const starMaterial = new THREE.PointsMaterial({ color: 0xffffff });
+const stars = new THREE.Points(starGeometry, starMaterial);
+scene.add(stars);
+
 camera.position.z = 15;
+
+// mouse representation with normalized values
+const mouse = {
+    x: undefined,
+    y: undefined,
+};
+
+const mouseIntertaCoeff = 0.5;
+
+addEventListener('mousemove', evt => {
+    mouse.x = (evt.clientX / innerWidth) * 2 - 1;
+    mouse.y = (evt.clientY / innerHeight) * 2 + 1;
+});
 
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-    sphere.rotation.y += 0.01;
+    sphere.rotation.y += 0.001;
+    gsap.to(earthGroup.rotation, {
+        x: -mouse.y * mouseIntertaCoeff,
+        y: mouse.x * mouseIntertaCoeff,
+        duration: 1.75,
+    });
 }
 animate();
