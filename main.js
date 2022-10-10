@@ -64,46 +64,48 @@ const atmosphere = new THREE.Mesh(
 atmosphere.scale.set(1.1, 1.1, 1.1);
 scene.add(atmosphere);
 
-// create points on sphere
-const spherePoint = new THREE.Mesh(
-    new THREE.SphereGeometry(
-        0.05, // radius
-        50, // # of width segments
-        50 // # of height segments
-    ),
-    new THREE.MeshBasicMaterial({
-        color: '#ff0000',
-    })
-);
-
-// 23.6345° N, 102.5528° W = lat long coords of mexico
-
-// calculate coord components in degrees to radians
-const lat = (23.6345 / 180) * Math.PI;
-// need to use the RECIPROCAL of the longitudinal value, eg -5 => 5 and 5 => -5
-const long = (-102.5528 / 180) * Math.PI;
-
-// calculate coords on unit sphere and multiply times earths radius in scene
-const x = earthRadius * Math.cos(lat) * Math.sin(long);
-const y = earthRadius * Math.sin(lat);
-const z = earthRadius * Math.cos(lat) * Math.cos(long);
-
-// assign position from coords
-spherePoint.position.x = x;
-spherePoint.position.y = y;
-spherePoint.position.z = z;
-
 // add earth meshes to scene
 const earthGroup = new THREE.Group();
 earthGroup.add(earth);
-earthGroup.add(spherePoint);
-scene.add(earthGroup);
+
+// create points on sphere
+function createPoint(lat, long) {
+    const spherePoint = new THREE.Mesh(
+        new THREE.SphereGeometry(
+            0.05, // radius
+            50, // # of width segments
+            50 // # of height segments
+        ),
+        new THREE.MeshBasicMaterial({
+            color: '#ff0000',
+        })
+    );
+
+    // 23.6345° N, 102.5528° W = lat long coords of mexico
+
+    // calculate coord components in degrees to radians
+    const radLat = (lat / 180) * Math.PI;
+    // need to use the RECIPROCAL of the longitudinal value, eg -5 => 5 and 5 => -5
+    const radLong = ((-1 * long) / 180) * Math.PI;
+
+    // calculate coords on unit sphere and multiply times earths radius in scene
+    const x = earthRadius * Math.cos(radLat) * Math.sin(radLong);
+    const y = earthRadius * Math.sin(radLat);
+    const z = earthRadius * Math.cos(radLat) * Math.cos(radLong);
+
+    // assign position from coords and add to group
+    spherePoint.position.x = x;
+    spherePoint.position.y = y;
+    spherePoint.position.z = z;
+    earthGroup.add(spherePoint);
+}
+
+createPoint(23.6345, 102.5528);
 
 // stars
 const starGeometry = new THREE.BufferGeometry();
-
 const starVertices = [];
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < 500; i++) {
     const x = (Math.random() - 0.5) * 2000;
     const y = (Math.random() - 0.5) * 2000;
     // negative z values go 'in' to the three js scene
@@ -114,6 +116,8 @@ for (let i = 0; i < 10000; i++) {
 starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
 const starMaterial = new THREE.PointsMaterial({ color: 0xffffff });
 const stars = new THREE.Points(starGeometry, starMaterial);
+
+scene.add(earthGroup);
 scene.add(stars);
 
 camera.position.z = 15;
