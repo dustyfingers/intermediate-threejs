@@ -25,10 +25,11 @@ renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
 // matching the devices pixel ratio also helps produce the highest resolution image possible
 renderer.setPixelRatio(window.devicePixelRatio);
 
-// create a sphere
-const sphere = new THREE.Mesh(
+// create earth
+const earthRadius = 5;
+const earth = new THREE.Mesh(
     new THREE.SphereGeometry(
-        5, // radius
+        earthRadius, // radius
         50, // # of width segments
         50 // # of height segments
     ),
@@ -43,10 +44,10 @@ const sphere = new THREE.Mesh(
     })
 );
 
-// add to scene
-scene.add(sphere);
+// need to rotate uv texture so points align with image of map
+earth.rotation.y = -Math.PI / 2;
 
-// create a sphere
+// create atmosphere
 const atmosphere = new THREE.Mesh(
     new THREE.SphereGeometry(
         5, // radius
@@ -60,16 +61,42 @@ const atmosphere = new THREE.Mesh(
         side: THREE.BackSide,
     })
 );
-
 atmosphere.scale.set(1.1, 1.1, 1.1);
-
-// add to scene
 scene.add(atmosphere);
+
+// create points on sphere
+const spherePoint = new THREE.Mesh(
+    new THREE.SphereGeometry(
+        0.05, // radius
+        50, // # of width segments
+        50 // # of height segments
+    ),
+    new THREE.MeshBasicMaterial({
+        color: '#ff0000',
+    })
+);
+
+// 23.6345° N, 102.5528° W = lat long coords of mexico
+
+// calculate coord components in degrees to radians
+const lat = (23.6345 / 180) * Math.PI;
+// need to use the RECIPROCAL of the longitudinal value, eg -5 => 5 and 5 => -5
+const long = (-102.5528 / 180) * Math.PI;
+
+// calculate coords on unit sphere and multiply times earths radius in scene
+const x = earthRadius * Math.cos(lat) * Math.sin(long);
+const y = earthRadius * Math.sin(lat);
+const z = earthRadius * Math.cos(lat) * Math.cos(long);
+
+// assign position from coords
+spherePoint.position.x = x;
+spherePoint.position.y = y;
+spherePoint.position.z = z;
 
 // add earth meshes to scene
 const earthGroup = new THREE.Group();
-earthGroup.add(sphere);
-// earthGroup.add(atmosphere);
+earthGroup.add(earth);
+earthGroup.add(spherePoint);
 scene.add(earthGroup);
 
 // stars
@@ -97,17 +124,17 @@ const mouse = {
     y: undefined,
 };
 
-const mouseIntertiaCoeff = 0.5;
-
 addEventListener('mousemove', evt => {
     mouse.x = (evt.clientX / innerWidth) * 2 - 1;
     mouse.y = (evt.clientY / innerHeight) * 2 + 1;
 });
 
+const mouseIntertiaCoeff = 1.8;
+
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-    sphere.rotation.y += 0.001;
+    // sphere.rotation.y += 0.002;
     gsap.to(earthGroup.rotation, {
         x: -mouse.y * mouseIntertiaCoeff,
         y: mouse.x * mouseIntertiaCoeff,
