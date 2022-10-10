@@ -5,6 +5,8 @@
         <link rel="icon" type="image/svg+xml" href="favicon.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Vite App</title>
+        <link href="tailwind.css" rel="stylesheet" />
+        <link href="style.css" rel="stylesheet" />
         <style>
             body {
                 margin: 0;
@@ -13,9 +15,33 @@
         </style>
     </head>
     <body>
-        <div class="w-1/2" id="canvasContainer">
-            <canvas></canvas>
+        <div class="flex h-screen">
+            <div class="w-1/2 flex flex-col justify-center px-8 bg-black">
+                <h1 class="text-white text-4xl mb-8">
+                    CHALLENGING THE STANDARD OF SPACEFLIGHT
+                </h1>
+                <p class="text-gray-400 mb-8">
+                    Minim aliquip consequat ullamco nulla ex magna Lorem. Lorem mollit
+                    fugiat laboris adipisicing fugiat nisi dolor incididunt eiusmod.
+                    Tempor labore ea occaecat velit enim enim in commodo ad eu quis velit
+                    ex. Occaecat voluptate tempor nostrud adipisicing dolore Lorem dolor
+                    id id. Commodo deserunt sunt et do elit mollit commodo id. Enim anim
+                    cillum aliquip velit ipsum laborum sit ut amet officia reprehenderit.
+                    Reprehenderit fugiat ex incididunt nostrud nulla laboris sit laboris
+                    voluptate ea veniam quis Lorem.
+                </p>
+                <a
+                    href="https://www.google.com"
+                    class="text-white bg-green-600 inline-block px-8 py-4 rounded-full"
+                >
+                    Learn More
+                </a>
+            </div>
+            <div class="w-1/2" id="canvasContainer">
+                <canvas></canvas>
+            </div>
         </div>
+
         <script type="module" src="/main.js"></script>
     </body>
 </html>

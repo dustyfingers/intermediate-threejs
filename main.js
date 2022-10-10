@@ -5,22 +5,23 @@ import earthFragmentShader from './shaders/earthFragment.glsl';
 import atmosphereVertexShader from './shaders/atmosphereVertex.glsl';
 import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl';
 
+const canvasContainer = document.querySelector('#canvasContainer');
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
     75,
-    window.innerWidth / window.innerHeight,
+    canvasContainer.offsetWidth / canvasContainer.offsetHeight,
     0.1,
     1000
 );
-
-const canvasContainer = document.querySelector('#canvasContainer');
 
 const renderer = new THREE.WebGLRenderer({
     // adding anti-aliasing to renderer helps reduce jagged edges on geometry
     antialias: true,
     canvas: document.querySelector('canvas'),
 });
-renderer.setSize(window.innerWidth, window.innerHeight);
+
+renderer.setSize(canvasContainer.offsetWidth, canvasContainer.offsetHeight);
 // matching the devices pixel ratio also helps produce the highest resolution image possible
 renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -96,7 +97,7 @@ const mouse = {
     y: undefined,
 };
 
-const mouseIntertaCoeff = 0.5;
+const mouseIntertiaCoeff = 0.5;
 
 addEventListener('mousemove', evt => {
     mouse.x = (evt.clientX / innerWidth) * 2 - 1;
@@ -108,8 +109,8 @@ function animate() {
     renderer.render(scene, camera);
     sphere.rotation.y += 0.001;
     gsap.to(earthGroup.rotation, {
-        x: -mouse.y * mouseIntertaCoeff,
-        y: mouse.x * mouseIntertaCoeff,
+        x: -mouse.y * mouseIntertiaCoeff,
+        y: mouse.x * mouseIntertiaCoeff,
         duration: 1.75,
     });
 }
